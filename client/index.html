@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<!--
+/********************************************************
+
+ ██████╗ ██████╗ ██████╗ ██████╗ ██╗
+██╔════╝██╔════╝ ██╔══██╗╚════██╗██║
+██║     ██║  ███╗██████╔╝ █████╔╝██║
+██║     ██║   ██║██╔══██╗ ╚═══██╗╚═╝
+╚██████╗╚██████╔╝██████╔╝██████╔╝██╗
+ ╚═════╝ ╚═════╝ ╚═════╝ ╚═════╝ ╚═╝
+                   
+(^▽^)このホームページは秘密のページです。
+(>_<)ソースはみないでください！
+
+*********************************************************/
+-->
+<html>
+
+<head>
+    <title>B3『An online chess game』☆★ Play now！★☆ </title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/style.css">
+    <script>
+        var title = document.title;
+        setInterval(function () {
+            title = title.slice(1) + title.slice(0, 1);
+            document.title = title;
+            window.status = title;
+        }, 200);
+
+        document.onkeydown = function (event) {
+            switch (event.keyCode) {
+                case 9:
+                    return false;
+                    break;
+            }
+        }
+    </script>
+</head>
+
+<body oncontextmenu="window.alert('右クリック禁止です。');return false;" onselectstart="return false;">
+    <img id="ms1" src="img/star.gif" style="position:fixed">
+    <img id="ms2" src="img/star.gif" style="position:fixed">
+    <img id="ms3" src="img/star.gif" style="position:fixed">
+    <img id="ms4" src="img/star.gif" style="position:fixed">
+    <img id="ms5" src="img/star.gif" style="position:fixed">
+    <img id="ms6" src="img/star.gif" style="position:fixed">
+    <img id="ms7" src="img/star.gif" style="position:fixed">
+    <img id="ms8" src="img/star.gif" style="position:fixed">
+    <script>
+        var mx = -200;
+        var my = -200;
+        var ix1 = 0;
+        var iy1 = 0;
+        var ix2 = 0;
+        var iy2 = 0;
+        var ix3 = 0;
+        var iy3 = 0;
+        var ix4 = 0;
+        var iy4 = 0;
+        var ix5 = 0;
+        var iy5 = 0;
+        var ix6 = 0;
+        var iy6 = 0;
+        var ix7 = 0;
+        var iy7 = 0;
+        var ix8 = 0;
+        var iy8 = 0;
+        if ("ontouchstart" in window) {
+            ms1.style.position = "absolute";
+            ms2.style.position = "absolute";
+            ms3.style.position = "absolute";
+            ms4.style.position = "absolute";
+            ms5.style.position = "absolute";
+            ms6.style.position = "absolute";
+            ms7.style.position = "absolute";
+            ms8.style.position = "absolute";
+            document.addEventListener("touchstart", function (event) {
+                mx = event.changedTouches[0].pageX + 10;
+                my = event.changedTouches[0].pageY + 10;
+            }, false);
+            document.addEventListener("touchmove", function (event) {
+                mx = event.changedTouches[0].pageX + 10;
+                my = event.changedTouches[0].pageY + 10;
+            }, false);
+            document.addEventListener("touchend", function (event) {
+                mx = event.changedTouches[0].pageX + 10;
+                my = event.changedTouches[0].pageY + 10;
+            }, false);
+        } else {
+            document.addEventListener("mousemove", function (event) {
+                mx = event.clientX + 10;
+                my = event.clientY + 10;
+            }, false);
+        }
+
+        function mousestalker() {
+            ix1 = (mx + 10 * ix1) / (10 + 1);
+            iy1 = (my + 10 * iy1) / (10 + 1);
+            ms1.style.left = ix1 + "px";
+            ms1.style.top = iy1 + "px";
+
+            ix2 = (mx + 10 + 20 * ix2) / (20 + 1);
+            iy2 = (my + 10 + 20 * iy2) / (20 + 1);
+            ms2.style.left = ix2 + "px";
+            ms2.style.top = iy2 + "px";
+
+            ix3 = (mx + 20 + 30 * ix3) / (30 + 1);
+            iy3 = (my + 20 + 30 * iy3) / (30 + 1);
+            ms3.style.left = ix3 + "px";
+            ms3.style.top = iy3 + "px";
+
+            ix4 = (mx + 30 + 40 * ix4) / (40 + 1);
+            iy4 = (my + 30 + 40 * iy4) / (40 + 1);
+            ms4.style.left = ix4 + "px";
+            ms4.style.top = iy4 + "px";
+
+            ix5 = (mx + 40 + 50 * ix5) / (50 + 1);
+            iy5 = (my + 40 + 50 * iy5) / (50 + 1);
+            ms5.style.left = ix5 + "px";
+            ms5.style.top = iy5 + "px";
+
+            ix6 = (mx + 50 + 60 * ix6) / (60 + 1);
+            iy6 = (my + 50 + 60 * iy6) / (60 + 1);
+            ms6.style.left = ix6 + "px";
+            ms6.style.top = iy6 + "px";
+
+            ix7 = (mx + 60 + 70 * ix7) / (70 + 1);
+            iy7 = (my + 60 + 70 * iy7) / (70 + 1);
+            ms7.style.left = ix7 + "px";
+            ms7.style.top = iy7 + "px";
+
+            ix8 = (mx + 70 + 80 * ix8) / (80 + 1);
+            iy8 = (my + 70 + 80 * iy8) / (80 + 1);
+            ms8.style.left = ix8 + "px";
+            ms8.style.top = iy8 + "px";
+
+            setTimeout(mousestalker, 10);
+        }
+        mousestalker();
+    </script>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/global.js"></script>
+<script src="js/canvas.js"></script>
+<script src="js/app.js"></script>
+
+</html>
