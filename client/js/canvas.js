@@ -57,6 +57,15 @@ class CanvasDisplay {
             this.cx.fillRect(0, 0, 8, 10 * 16);
             this.cx.fillRect(9.5 * 16, 0, 8, 10 * 16);
             this.cx.fillRect(0, 16 * 10, 10 * 16, 32);
+
+            this.cx.textAlign = "left";
+            this.cx.fillStyle = "#FFFFFF";
+            this.cx.font = "bold 8px sans-serif";
+            this.cx.fillText(
+                this.data.currentPlayer,
+                8,
+                12
+            );
         }
 
         this.clearDisplay = () => {

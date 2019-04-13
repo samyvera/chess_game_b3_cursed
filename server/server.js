@@ -38,7 +38,10 @@ io.on('connection', socket => {
 });
 
 var game = new Game();
-var sendUpdates = () => game.players.forEach(player => sockets[player.id].emit('updateGame', game));
+var sendUpdates = () => game.players.forEach(player => {
+    game.currentPlayer = player.role;
+    sockets[player.id].emit('updateGame', game)
+});
 
 setInterval(game.act, 1000 / config.networkUpdateFactor);
 setInterval(sendUpdates, 1000 / config.networkUpdateFactor);
