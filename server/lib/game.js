@@ -4,6 +4,7 @@ var Player = require('./player');
 class Game {
     constructor() {
         this.players = [];
+        this.grid = Array.from(Array(8), () => new Array(8))
 
         this.act = () => {
             this.players.forEach(player => player.act(this));
