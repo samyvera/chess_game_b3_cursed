@@ -21,7 +21,7 @@ class CanvasDisplay {
         this.cx.imageSmoothingEnabled = false;
         this.data = global.gameData;
 
-        this.drawGrid = () => {
+        this.draw2DBackground = () => {
             this.cx.fillStyle = '#033';
             this.cx.fillRect(0, 0, 8 * 16, 8 * 16);
             for (let x = 0; x < 8 * 16; x += 16) {
@@ -35,11 +35,19 @@ class CanvasDisplay {
             }
         }
 
+        this.draw2DCursor = () => {
+            var cursor = document.createElement("img");
+            var pos = this.data.currentPlayer.pos;
+            cursor.src = "../img/2DCursor.png";
+            var spriteY = this.data.currentPlayer.action ? 16 : 0;
+            if (pos) this.cx.drawImage(cursor, Math.floor(this.animationTime * 3) % 2 * 16, spriteY, 16, 16, pos.x - 8, pos.y - 8, 16, 16);
+        }
+
         this.calculPos = pos => {
             return { x:pos.x * 8 + pos.z * 8, y:pos.z * 4 - pos.x * 4 - pos.y * 8 };
         }
 
-        this.drawBackground = () => {
+        this.drawIsoBackground = () => {
             for (let z = 0; z < 8; z++) {
                 for (let x = 8; x > 0; x--) {
                     var tilesSprites = document.createElement("img");
@@ -61,11 +69,13 @@ class CanvasDisplay {
             this.cx.textAlign = "left";
             this.cx.fillStyle = "#FFFFFF";
             this.cx.font = "bold 8px sans-serif";
-            this.cx.fillText(
-                this.data.currentPlayer,
-                8,
-                12
-            );
+            if (this.data.currentPlayer && this.data.currentPlayer.role !== "spectator") {
+                this.cx.fillText(
+                    this.data.currentPlayer.role + " x:" + this.data.currentPlayer.pos.x + " y:" + this.data.currentPlayer.pos.y,
+                    8,
+                    12
+                );
+            }
         }
 
         this.clearDisplay = () => {
@@ -131,14 +141,17 @@ class CanvasDisplay {
             this.mode = document.getElementById("mode").checked ? "iso" : "2d";
             this.animationTime += step;
             this.clearDisplay();
-            if (this.mode === "2d") {
-                this.cx.translate(16, 24);
-                this.drawGrid();
-                this.cx.translate(-16, -24);
-            } else {
-                this.cx.translate(8, 16*6);
-                this.drawBackground();
-                this.cx.translate(-8, -16*6);
+            if (this.data.currentPlayer) {
+                if (this.mode === "2d") {
+                    this.cx.translate(16, 24);
+                    this.draw2DBackground();
+                    this.draw2DCursor();
+                    this.cx.translate(-16, -24);
+                } else {
+                    this.cx.translate(8, 16*6);
+                    this.drawIsoBackground();
+                    this.cx.translate(-8, -16*6);
+                }
             }
             this.drawHUD();
             this.drawGameStatus();

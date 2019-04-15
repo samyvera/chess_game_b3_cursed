@@ -1,9 +1,27 @@
 var util = require('./util');
+var Vector2D = require('./vector2D');
+var Piece = require('./piece');
 
 class Player {
     constructor(id, role) {
         this.id = id;
         this.role = role;
+        this.pos = new Vector2D(0, 0);
+        this.speed = 2;
+
+        this.createArmy = () => {
+            var army = [];
+            if (this.role === "player1") {
+                this.pos = new Vector2D(3, 0);
+                army.push(new Piece("king", new Vector2D(3 * 16 + 8, 8)));
+            }
+            else if (this.role === "player2") {
+                this.pos = new Vector2D(3 * 16 + 8, 7 * 16 + 8);
+                army.push(new Piece("king", new Vector2D(3 * 16 + 8, 7 * 16 + 8)));
+            }
+            return army;
+        }
+        this.army = this.createArmy();
 
         this.status = null;
         this.action = null;
@@ -18,8 +36,54 @@ class Player {
             b: false
         };
 
-        this.play = game => {
+        this.moveCursor = game => {
+            if (this.keys.up && this.pos.y > 8) this.pos.y -= this.speed;
+            else if (this.keys.down && this.pos.y < 7 * 16 + 8) this.pos.y += this.speed;
+            if (this.keys.left && this.pos.x > 8) this.pos.x -= this.speed;
+            else if (this.keys.right && this.pos.x < 7 * 16 + 8) this.pos.x += this.speed;
+        }
 
+        this.select = game => {
+            if (this.keys.a) this.action = "select";
+            else if (this.keys.b) this.action = null;
+        }
+
+        this.moveIdlePos = game => {
+            if (this.pos.x !== this.idlePos.x || this.pos.y !== this.idlePos.y) {
+                if (this.pos.x < this.idlePos.x) {
+                    this.pos.x += this.speed;
+                }
+                else if (this.pos.x > this.idlePos.x) {
+                    this.pos.x -= this.speed;
+                }
+                if (this.pos.y < this.idlePos.y) {
+                    this.pos.y += this.speed;
+                }
+                else if (this.pos.y > this.idlePos.y) {
+                    this.pos.y -= this.speed;
+                }
+            }
+        }
+
+        this.play = game => {
+            this.action = this.input ? this.input : this.action;
+
+            this.idlePos = new Vector2D(Math.trunc(this.pos.x / 16) * 16 + 8, Math.trunc(this.pos.y / 16) * 16 + 8);
+
+            if (!this.status) {
+                this.select(game);
+                if (!this.action) {
+                    if (this.keys.up || this.keys.left || this.keys.down || this.keys.right) {
+                        this.moveCursor(game);
+                    }
+                    else {
+                        this.moveIdlePos(game);
+                    }
+                }
+                else if (this.action === "select") {
+                    this.moveIdlePos(game);
+                }
+            }
         }
 
         this.spectate = game => {

@@ -19,6 +19,7 @@ var global = {
     startPingTime: 0,
 
     gameData: {
-        players: []
+        players: [],
+        currentPlayer: null
     }
 };
