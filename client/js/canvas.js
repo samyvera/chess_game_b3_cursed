@@ -25,7 +25,7 @@ class CanvasDisplay {
             for (let x = 0; x < 8 * 16; x += 16) {
                 for (let y = 0; y < 8 * 16; y += 16) {
                     if (x / 16 % 2 === 0 && y / 16 % 2 === 0 || x / 16 % 2 !== 0 && y / 16 % 2 !== 0) {
-                        this.cx.fillStyle = '#033';
+                        this.cx.fillStyle = '#044';
                         this.cx.fillRect(x + 1, y + 1, 14, 14);
                         this.cx.fillStyle = '#088';
                         this.cx.fillRect(x + 15, y, 1, 16);
@@ -36,7 +36,7 @@ class CanvasDisplay {
                     else {
                         this.cx.fillStyle = '#088';
                         this.cx.fillRect(x + 1, y + 1, 14, 14);
-                        this.cx.fillStyle = '#033';
+                        this.cx.fillStyle = '#044';
                         this.cx.fillRect(x + 15, y, 1, 16);
                         this.cx.fillRect(x, y + 15, 16, 1);
                         this.cx.fillRect(x, y, 16, 1);
@@ -107,18 +107,25 @@ class CanvasDisplay {
             this.cx.fillStyle = "#FFFFFF";
             this.cx.font = "bold 8px sans-serif";
             if (this.data.currentPlayer && this.data.currentPlayer.role !== "spectator") {
-                this.cx.fillText(
-                    this.data.currentPlayer.role + " x:" + this.data.currentPlayer.pos.x + " y:" + this.data.currentPlayer.pos.y,
-                    8,
-                    12
-                );
+                this.cx.fillText("You are " + this.data.currentPlayer.role, 8, 12);
+                this.data.players.forEach(player => {
+                    player.army.forEach(piece => {
+                        if (piece.pos.x === Math.trunc(this.data.currentPlayer.pos.x / 16) && piece.pos.y === Math.trunc(this.data.currentPlayer.pos.y / 16)) {
+                            this.cx.textAlign = "right";
+                            var info = this.data.currentPlayer.selectedPiece ? ("[ " + this.data.currentPlayer.selectedPiece.color + " " + this.data.currentPlayer.selectedPiece.role + " ]") : piece.color + " " + piece.role;
+                            this.cx.fillText(
+                                info,
+                                152,
+                                12
+                            );
+                        }
+                    });
+                });
             }
             else if (this.data.currentPlayer) {
-                this.cx.fillText(
-                    this.data.currentPlayer.role,
-                    8,
-                    12
-                );
+                var info = "You are a " + this.data.currentPlayer.role + ". Please wait";
+                for (let i = 0; i < Math.floor(this.animationTime) % 4; i++) info += ".";
+                this.cx.fillText(info, 8, 12);
             }
         }
 
