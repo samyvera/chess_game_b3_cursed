@@ -27,7 +27,7 @@ Open your web browser to `localhost:3000`
 
 - Quick join and play (no sign-ups)
 - Queue up (when 2+ players)
-- ~~Spectate~~
+- Spectate
 - ~~Rooms~~
 - Player settings
   - ~~Add name~~

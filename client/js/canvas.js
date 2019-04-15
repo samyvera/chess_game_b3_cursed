@@ -22,15 +22,26 @@ class CanvasDisplay {
         this.data = global.gameData;
 
         this.draw2DBackground = () => {
-            this.cx.fillStyle = '#033';
-            this.cx.fillRect(0, 0, 8 * 16, 8 * 16);
             for (let x = 0; x < 8 * 16; x += 16) {
                 for (let y = 0; y < 8 * 16; y += 16) {
-                    this.cx.fillStyle = '#0f0';
-                    this.cx.fillRect(x, y, 16, 1);
-                    this.cx.fillRect(x, y + 15, 16, 1);
-                    this.cx.fillRect(x, y, 1, 16);
-                    this.cx.fillRect(x + 15, y, 1, 16);
+                    if (x / 16 % 2 === 0 && y / 16 % 2 === 0 || x / 16 % 2 !== 0 && y / 16 % 2 !== 0) {
+                        this.cx.fillStyle = '#033';
+                        this.cx.fillRect(x + 1, y + 1, 14, 14);
+                        this.cx.fillStyle = '#088';
+                        this.cx.fillRect(x + 15, y, 1, 16);
+                        this.cx.fillRect(x, y + 15, 16, 1);
+                        this.cx.fillRect(x, y, 16, 1);
+                        this.cx.fillRect(x, y, 1, 16);
+                    }
+                    else {
+                        this.cx.fillStyle = '#088';
+                        this.cx.fillRect(x + 1, y + 1, 14, 14);
+                        this.cx.fillStyle = '#033';
+                        this.cx.fillRect(x + 15, y, 1, 16);
+                        this.cx.fillRect(x, y + 15, 16, 1);
+                        this.cx.fillRect(x, y, 16, 1);
+                        this.cx.fillRect(x, y, 1, 16);
+                    }
                 }
             }
         }

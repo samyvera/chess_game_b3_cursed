@@ -38,7 +38,8 @@
     </script>
 </head>
 
-<body oncontextmenu="window.alert('右クリック禁止です。');return false;" onselectstart="return false;">
+<body oncontextmenu="window.alert('右クリック禁止です。RIGTH CLICK PROHIBITED');return false;" onselectstart="return false;">
+    <button id="infos" onclick="document.getElementById('informations').style.display = 'flex';">Informations</button>
     <label class="switch">
         <input type="checkbox" id="mode">
         <span class="slider round"></span>
@@ -145,6 +146,10 @@
         }
         mousestalker();
     </script>
+    <p id="informations" onclick="document.getElementById('informations').style.display = 'none';">
+		Informations<br>
+		An online chess game built on NodeJs with Express and socket.io. No unnecessary libraries.
+    </p>
 </body>
 <script src="/socket.io/socket.io.js"></script>
 <script src="js/global.js"></script>

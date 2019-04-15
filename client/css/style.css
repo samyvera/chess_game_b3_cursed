@@ -4,13 +4,11 @@ html, body {
     margin: 0;
     display: flex;
     background-image: url('../img/back.png');
-    box-shadow: inset 0px 0px 25px 0px #000;
-    overflow: hidden;
 }
 
 canvas {
     margin: auto;
-    box-shadow: 0px 0px 10px 0px #000;
+    padding: 64px 0;
     z-index: 1;
 }
 
@@ -39,7 +37,9 @@ canvas {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #f88;
+    border: none;
+    border: 1px solid #fff;
+    background-color: #000;
     -webkit-transition: .4s;
     transition: .4s;
   }
@@ -47,7 +47,7 @@ canvas {
   .slider:before {
     position: absolute;
     content: "";
-    height: 26px;
+    height: 24px;
     width: 26px;
     left: 4px;
     bottom: 4px;
@@ -57,17 +57,16 @@ canvas {
   }
   
   input:checked + .slider {
-    background-color: #88f;
-  }
-  
-  input:focus + .slider {
-    box-shadow: 0 0 1px #88f;
+    border: none;
+    border: 1px solid #fff;
+    background-color: #fff;
   }
   
   input:checked + .slider:before {
     -webkit-transform: translateX(26px);
     -ms-transform: translateX(26px);
     transform: translateX(26px);
+    background-color: #000;
   }
   
   /* Rounded sliders */
@@ -77,4 +76,48 @@ canvas {
   
   .slider.round:before {
     border-radius: 50%;
+  }
+
+  #infos {
+    position: absolute;
+    top: 16px;
+    left: 96px;
+    height: 33px;
+    width: auto;
+    margin: 0;
+    margin-right: 16px;
+    padding: 8px 16px;
+    border: none;
+    border: 1px solid #fff;
+    background-color: #000;
+    color: #fff;
+    font-family: monospace;
+    transition: 0.3s;
+    z-index: 2;
+  }
+  #infos:hover {
+    background-color: #fff;
+    color: #000;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  #infos:focus {
+    outline: none;
+  }
+
+  #informations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    background: #000d;
+    text-align: center;
+    cursor: pointer;
+    z-index: 2;
   }

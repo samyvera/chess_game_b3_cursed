@@ -1,12 +1,12 @@
 var global = {
 
     arrowCodes: new Map([
-        [81, "left"],
-        [90, "up"],
-        [68, "right"],
-        [83, "down"],
-        [79, "a"],
-        [80, "b"]
+        [37, "left"],
+        [38, "up"],
+        [39, "right"],
+        [40, "down"],
+        [87, "a"],
+        [88, "b"]
     ]),
 
     defaultPlayerName: "Joe",
