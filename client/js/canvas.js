@@ -54,6 +54,28 @@ class CanvasDisplay {
             if (pos) this.cx.drawImage(cursor, Math.floor(this.animationTime * 3) % 2 * 16, spriteY, 16, 16, pos.x - 8, pos.y - 8, 16, 16);
         }
 
+        this.draw2DPiece = () => {
+            this.data.players.forEach(player => {
+                player.army.forEach(piece => {
+                    var sprite = document.createElement("img");
+                    if (player.role === "player1") {
+                        sprite.src = "../img/white.png";
+                    }
+                    else if (player.role === "player2") {
+                        sprite.src = "../img/black.png";
+                    }
+                    var spritePos = null;
+                    if (piece.role === "pawn") spritePos = 0;
+                    else if (piece.role === "king") spritePos = 1;
+                    else if (piece.role === "queen") spritePos = 2;
+                    else if (piece.role === "rook") spritePos = 3;
+                    else if (piece.role === "knight") spritePos = 4;
+                    else if (piece.role === "bishop") spritePos = 5;
+                    this.cx.drawImage(sprite, spritePos * 16, 0, 16, 16, piece.pos.x * 16, piece.pos.y * 16, 16, 16);
+                });
+            });
+        }
+
         this.calculPos = pos => {
             return { x:pos.x * 8 + pos.z * 8, y:pos.z * 4 - pos.x * 4 - pos.y * 8 };
         }
@@ -83,6 +105,13 @@ class CanvasDisplay {
             if (this.data.currentPlayer && this.data.currentPlayer.role !== "spectator") {
                 this.cx.fillText(
                     this.data.currentPlayer.role + " x:" + this.data.currentPlayer.pos.x + " y:" + this.data.currentPlayer.pos.y,
+                    8,
+                    12
+                );
+            }
+            else if (this.data.currentPlayer) {
+                this.cx.fillText(
+                    this.data.currentPlayer.role,
                     8,
                     12
                 );
@@ -157,6 +186,7 @@ class CanvasDisplay {
                     this.cx.translate(16, 24);
                     this.draw2DBackground();
                     this.draw2DCursor();
+                    this.draw2DPiece();
                     this.cx.translate(-16, -24);
                 } else {
                     this.cx.translate(8, 16*6);
