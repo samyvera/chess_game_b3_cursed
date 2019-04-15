@@ -12,9 +12,9 @@ class Player {
         this.createArmy = () => {
             var army = [];
             if (this.role === "player1") {
-                this.pos = new Vector2D(3 * 16 + 8, 8);
-                army.push(new Piece("king", new Vector2D(3, 0)));
-                army.push(new Piece("queen", new Vector2D(4, 0)));
+                this.pos = new Vector2D(4 * 16 + 8, 8);
+                army.push(new Piece("king", new Vector2D(4, 0)));
+                army.push(new Piece("queen", new Vector2D(3, 0)));
                 army.push(new Piece("rook", new Vector2D(0, 0)));
                 army.push(new Piece("rook", new Vector2D(7, 0)));
                 army.push(new Piece("knight", new Vector2D(1, 0)));
@@ -24,9 +24,9 @@ class Player {
                 for (let i = 0; i < 8; i++) army.push(new Piece("pawn", new Vector2D(i, 1)));
             }
             else if (this.role === "player2") {
-                this.pos = new Vector2D(3 * 16 + 8, 7 * 16 + 8);
-                army.push(new Piece("king", new Vector2D(3, 7)));
-                army.push(new Piece("queen", new Vector2D(4, 7)));
+                this.pos = new Vector2D(4 * 16 + 8, 7 * 16 + 8);
+                army.push(new Piece("king", new Vector2D(4, 7)));
+                army.push(new Piece("queen", new Vector2D(3, 7)));
                 army.push(new Piece("rook", new Vector2D(0, 7)));
                 army.push(new Piece("rook", new Vector2D(7, 7)));
                 army.push(new Piece("knight", new Vector2D(1, 7)));

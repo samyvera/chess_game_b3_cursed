@@ -24,10 +24,10 @@ class Game {
                 if (util.is(playerRole, ["player1", "player2"])) {
                     if (this.players[0].id === player.id) {
                         player.role = "player1";
-                        player.pos = new Vector2D(3 * 16 + 8, 8);
+                        player.pos = new Vector2D(4 * 16 + 8, 8);
                     } else if (this.players.length > 1 && this.players[1].id === player.id) {
                         player.role = "player2";
-                        player.pos = new Vector2D(3 * 16 + 8, 7 * 16 + 8);
+                        player.pos = new Vector2D(4 * 16 + 8, 7 * 16 + 8);
                     }
                 } else if (this.players.length > 2 && !util.is(player.id, [this.players[0].id, this.players[1].id])) {
                     player.role = "spectator";

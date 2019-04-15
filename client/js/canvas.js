@@ -60,11 +60,13 @@ class CanvasDisplay {
                     var sprite = document.createElement("img");
                     if (player.role === "player1") {
                         sprite.src = "../img/white.png";
-                        if (global.reverse) sprite.src = "../img/white-reverse.png";
+                        if (this.data.currentPlayer.role === "spectator") sprite.src = "../img/white-demi.png"
+                        else if (global.reverse) sprite.src = "../img/white-reverse.png";
                     }
                     else if (player.role === "player2") {
                         sprite.src = "../img/black.png";
-                        if (global.reverse) sprite.src = "../img/black-reverse.png";
+                        if (this.data.currentPlayer.role === "spectator") sprite.src = "../img/black-demi.png"
+                        else if (global.reverse) sprite.src = "../img/black-reverse.png";
                     }
                     var spritePos = null;
                     if (piece.role === "pawn") spritePos = 0;
@@ -196,6 +198,11 @@ class CanvasDisplay {
                         global.arrowCodes.set(39, "left");
                         global.arrowCodes.set(40, "up");
                     }
+                    else if (this.data.currentPlayer.role === "spectator") {
+                        this.cx.translate(16*4, 16*4);
+                        this.cx.rotate(-Math.PI/2);
+                        this.cx.translate(-(16*4), -(16*4));
+                    }
                     else {
                         global.reverse = false;
                         global.arrowCodes.set(37, "left");
@@ -207,6 +214,9 @@ class CanvasDisplay {
                     this.draw2DCursor();
                     this.draw2DPiece();
                     if (this.data.currentPlayer.role === "player1") {
+                        this.cx.setTransform(this.zoom, 0, 0, this.zoom, 16 * 3, 16 * 4.5);
+                    }
+                    else if (this.data.currentPlayer.role === "spectator") {
                         this.cx.setTransform(this.zoom, 0, 0, this.zoom, 16 * 3, 16 * 4.5);
                     }
                     this.cx.translate(-16, -24);
