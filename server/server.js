@@ -17,7 +17,7 @@ io.on('connection', socket => {
     socket.on('spawn', playerName => {
         if (util.findIndex(game.players, currentPlayer.id) > -1) game.players.splice(util.findIndex(game.players, currentPlayer.id), 1);
         currentPlayer.name = playerName;
-        socket.emit('welcome', currentPlayer);
+        socket.emit('welcome');
     });
 
     socket.on('gotit', () => {

@@ -17,7 +17,7 @@ var global = {
     kicked: false,
     continuity: false,
     startPingTime: 0,
-
+    reverse: false,
     gameData: {
         players: [],
         currentPlayer: null

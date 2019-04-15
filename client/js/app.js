@@ -1,9 +1,8 @@
 var socket = io();
 
 var setupSocket = socket => {
-    socket.on("welcome", newPlayer => {
+    socket.on("welcome", () => {
         socket.emit("gotit");
-        global.player = newPlayer;
         global.gameStart = true;
     });
 

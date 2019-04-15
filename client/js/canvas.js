@@ -60,9 +60,11 @@ class CanvasDisplay {
                     var sprite = document.createElement("img");
                     if (player.role === "player1") {
                         sprite.src = "../img/white.png";
+                        if (global.reverse) sprite.src = "../img/white-reverse.png";
                     }
                     else if (player.role === "player2") {
                         sprite.src = "../img/black.png";
+                        if (global.reverse) sprite.src = "../img/black-reverse.png";
                     }
                     var spritePos = null;
                     if (piece.role === "pawn") spritePos = 0;
@@ -184,9 +186,29 @@ class CanvasDisplay {
             if (this.data.currentPlayer) {
                 if (this.mode === "2d") {
                     this.cx.translate(16, 24);
+                    if (this.data.currentPlayer.role === "player1") {
+                        this.cx.translate(16*4, 16*4);
+                        this.cx.rotate(Math.PI);
+                        this.cx.translate(-(16*4), -(16*4));
+                        global.reverse = true;
+                        global.arrowCodes.set(37, "right");
+                        global.arrowCodes.set(38, "down");
+                        global.arrowCodes.set(39, "left");
+                        global.arrowCodes.set(40, "up");
+                    }
+                    else {
+                        global.reverse = false;
+                        global.arrowCodes.set(37, "left");
+                        global.arrowCodes.set(38, "up");
+                        global.arrowCodes.set(39, "right");
+                        global.arrowCodes.set(40, "down");
+                    }
                     this.draw2DBackground();
                     this.draw2DCursor();
                     this.draw2DPiece();
+                    if (this.data.currentPlayer.role === "player1") {
+                        this.cx.setTransform(this.zoom, 0, 0, this.zoom, 16 * 3, 16 * 4.5);
+                    }
                     this.cx.translate(-16, -24);
                 } else {
                     this.cx.translate(8, 16*6);
