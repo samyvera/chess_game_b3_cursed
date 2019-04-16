@@ -54,6 +54,30 @@ class Player {
             b: false
         };
 
+        this.resetPlayer = (id, role) => {
+            this.id = id;
+            this.role = role;
+            this.pos = null;
+            this.speed = 2;
+            
+            this.army = this.createArmy();
+
+            this.status = null;
+            this.action = null;
+            this.input = null;
+    
+            this.selectedPiece = null;
+    
+            this.keys = {
+                left: false,
+                right: false,
+                up: false,
+                down: false,
+                a: false,
+                b: false
+            };
+        }
+
         this.moveCursor = game => {
             if (this.keys.up && this.pos.y > 8) this.pos.y -= this.speed;
             else if (this.keys.down && this.pos.y < 7 * 16 + 8) this.pos.y += this.speed;
@@ -67,6 +91,7 @@ class Player {
                     player.army.forEach(piece => {
                         if (Math.trunc(this.pos.x / 16) === piece.pos.x && Math.trunc(this.pos.y / 16) === piece.pos.y && player.role === this.role) {
                             this.action = "select";
+                            piece.status = "selected";
                             this.selectedPiece = piece;
                         }
                     });
@@ -74,6 +99,7 @@ class Player {
             }
             else if (this.keys.b && this.action === "select") {
                 this.action = null;
+                this.selectedPiece.status = null;
                 this.selectedPiece = null;
             }
         }
@@ -97,9 +123,7 @@ class Player {
 
         this.play = game => {
             this.action = this.input ? this.input : this.action;
-
             this.idlePos = new Vector2D(Math.trunc(this.pos.x / 16) * 16 + 8, Math.trunc(this.pos.y / 16) * 16 + 8);
-
             if (!this.status) {
                 this.select(game);
                 if (!this.action) {

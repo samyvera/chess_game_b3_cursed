@@ -57,17 +57,6 @@ class CanvasDisplay {
         this.draw2DPiece = () => {
             this.data.players.forEach(player => {
                 player.army.forEach(piece => {
-                    var sprite = document.createElement("img");
-                    if (player.role === "player1") {
-                        sprite.src = "../img/white.png";
-                        if (this.data.currentPlayer.role === "spectator") sprite.src = "../img/white-demi.png"
-                        else if (global.reverse) sprite.src = "../img/white-reverse.png";
-                    }
-                    else if (player.role === "player2") {
-                        sprite.src = "../img/black.png";
-                        if (this.data.currentPlayer.role === "spectator") sprite.src = "../img/black-demi.png"
-                        else if (global.reverse) sprite.src = "../img/black-reverse.png";
-                    }
                     var spritePos = null;
                     if (piece.role === "pawn") spritePos = 0;
                     else if (piece.role === "king") spritePos = 1;
@@ -75,7 +64,37 @@ class CanvasDisplay {
                     else if (piece.role === "rook") spritePos = 3;
                     else if (piece.role === "knight") spritePos = 4;
                     else if (piece.role === "bishop") spritePos = 5;
-                    this.cx.drawImage(sprite, spritePos * 16, 0, 16, 16, piece.pos.x * 16, piece.pos.y * 16, 16, 16);
+                    var spriteX = spritePos * 16;
+                    var spriteY = 0;
+                    var width = 16;
+                    var height = 16;
+                    var posX = piece.pos.x * 16;
+                    var posY = piece.pos.y * 16;
+                    var sprite = document.createElement("img");
+                    if (player.role === "player1") {
+                        sprite.src = "../img/white";
+                        if (this.data.currentPlayer.role === "spectator") sprite.src = "../img/white-demi"
+                        else if (global.reverse) sprite.src = "../img/white-reverse";
+                    }
+                    else if (player.role === "player2") {
+                        sprite.src = "../img/black";
+                        if (this.data.currentPlayer.role === "spectator") sprite.src = "../img/black-demi"
+                        else if (global.reverse) sprite.src = "../img/black-reverse";
+                    }
+                    if (piece.status === "selected") {
+                        height = 32;
+                        if (this.data.currentPlayer.role === "player1") {
+                            posY += Math.floor(this.animationTime * 3) % 2;
+                        }
+                        else if (this.data.currentPlayer.role === "player2") {
+                            posY -= Math.floor(this.animationTime * 3) % 2;
+                        }
+                        else if (this.data.currentPlayer.role === "spectator") {
+                            posX += Math.floor(this.animationTime * 3) % 2;
+                        }
+                    }
+                    sprite.src += ".png";
+                    this.cx.drawImage(sprite, spriteX, spriteY, width, height, posX, posY, width, height);
                 });
             });
         }
