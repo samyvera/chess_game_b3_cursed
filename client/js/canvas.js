@@ -126,10 +126,16 @@ class CanvasDisplay {
             this.cx.fillStyle = "#FFFFFF";
             this.cx.font = "bold 8px sans-serif";
             if (this.data.currentPlayer && this.data.currentPlayer.role !== "spectator") {
-                this.cx.fillText("You are " + this.data.currentPlayer.role, 8, 12);
+                var info = "You are a " + this.data.currentPlayer.role;
+                if (this.data.players.length === 1) {
+                    info += ". Please wait";
+                    for (let i = 0; i < Math.floor(this.animationTime) % 4; i++) info += ".";
+                }
+                this.cx.fillText(info, 8, 12);
                 this.data.players.forEach(player => {
                     player.army.forEach(piece => {
-                        if (piece.pos.x === Math.trunc(this.data.currentPlayer.pos.x / 16) && piece.pos.y === Math.trunc(this.data.currentPlayer.pos.y / 16)) {
+                        if (this.data.players.length > 1 && 
+                            piece.pos.x === Math.trunc(this.data.currentPlayer.pos.x / 16) && piece.pos.y === Math.trunc(this.data.currentPlayer.pos.y / 16)) {
                             this.cx.textAlign = "right";
                             var info = this.data.currentPlayer.selectedPiece ? ("[ " + this.data.currentPlayer.selectedPiece.color + " " + this.data.currentPlayer.selectedPiece.role + " ]") : piece.color + " " + piece.role;
                             this.cx.fillText(
@@ -211,6 +217,7 @@ class CanvasDisplay {
             this.mode = document.getElementById("mode").checked ? "iso" : "2d";
             this.animationTime += step;
             this.clearDisplay();
+
             if (this.data.currentPlayer) {
                 if (this.mode === "2d") {
                     this.cx.translate(16, 24);
@@ -237,7 +244,7 @@ class CanvasDisplay {
                         global.arrowCodes.set(40, "down");
                     }
                     this.draw2DBackground();
-                    this.draw2DCursor();
+                    if (this.data.players.length > 1) this.draw2DCursor();
                     this.draw2DPiece();
                     if (this.data.currentPlayer.role === "player1") {
                         this.cx.setTransform(this.zoom, 0, 0, this.zoom, 16 * 3, 16 * 4.5);
