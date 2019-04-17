@@ -46,6 +46,13 @@ class CanvasDisplay {
             }
         }
 
+        this.draw2DMoves = () => {
+            this.data.currentPlayer.possibleMoves.forEach(move => {
+                this.cx.fillStyle = '#00f8';
+                this.cx.fillRect(move.x * 16 + 1, move.y * 16 + 1, 14, 14);
+            });
+        }
+
         this.draw2DCursor = () => {
             var cursor = document.createElement("img");
             var pos = this.data.currentPlayer.pos;
@@ -244,6 +251,7 @@ class CanvasDisplay {
                         global.arrowCodes.set(40, "down");
                     }
                     this.draw2DBackground();
+                    if (this.data.currentPlayer.possibleMoves) this.draw2DMoves();
                     if (this.data.players.length > 1) this.draw2DCursor();
                     this.draw2DPiece();
                     if (this.data.currentPlayer.role === "player1") {

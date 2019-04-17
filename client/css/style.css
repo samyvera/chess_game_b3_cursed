@@ -58,7 +58,7 @@ canvas {
   
   input:checked + .slider {
     border: none;
-    border: 1px solid #fff;
+    border: 1px solid #000;
     background-color: #fff;
   }
   
@@ -67,15 +67,6 @@ canvas {
     -ms-transform: translateX(26px);
     transform: translateX(26px);
     background-color: #000;
-  }
-  
-  /* Rounded sliders */
-  .slider.round {
-    border-radius: 34px;
-  }
-  
-  .slider.round:before {
-    border-radius: 50%;
   }
 
   #infos {

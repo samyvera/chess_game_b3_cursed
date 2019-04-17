@@ -29,6 +29,8 @@ class Player {
                 army.push(new Piece("queen", new Vector2D(3, 7), "black"));
                 army.push(new Piece("rook", new Vector2D(0, 7), "black"));
                 army.push(new Piece("rook", new Vector2D(7, 7), "black"));
+                army.push(new Piece("pawn", new Vector2D(4, 4), "black"));
+                army.push(new Piece("pawn", new Vector2D(5, 5), "black"));
                 army.push(new Piece("knight", new Vector2D(1, 7), "black"));
                 army.push(new Piece("knight", new Vector2D(6, 7), "black"));
                 army.push(new Piece("bishop", new Vector2D(2, 7), "black"));
@@ -67,6 +69,7 @@ class Player {
             this.input = null;
     
             this.selectedPiece = null;
+            this.possibleMoves = null;
     
             this.keys = {
                 left: false,
@@ -93,6 +96,7 @@ class Player {
                             this.action = "select";
                             piece.status = "selected";
                             this.selectedPiece = piece;
+                            this.possibleMoves = this.selectedPiece.getMoves(game);
                         }
                     });
                 });
@@ -101,6 +105,7 @@ class Player {
                 this.action = null;
                 this.selectedPiece.status = null;
                 this.selectedPiece = null;
+                this.possibleMoves = null;
             }
         }
 
