@@ -25,18 +25,18 @@ class CanvasDisplay {
             for (let x = 0; x < 8 * 16; x += 16) {
                 for (let y = 0; y < 8 * 16; y += 16) {
                     if (x / 16 % 2 === 0 && y / 16 % 2 === 0 || x / 16 % 2 !== 0 && y / 16 % 2 !== 0) {
-                        this.cx.fillStyle = '#044';
-                        this.cx.fillRect(x + 1, y + 1, 14, 14);
                         this.cx.fillStyle = '#088';
+                        this.cx.fillRect(x + 1, y + 1, 14, 14);
+                        this.cx.fillStyle = '#044';
                         this.cx.fillRect(x + 15, y, 1, 16);
                         this.cx.fillRect(x, y + 15, 16, 1);
                         this.cx.fillRect(x, y, 16, 1);
                         this.cx.fillRect(x, y, 1, 16);
                     }
                     else {
-                        this.cx.fillStyle = '#088';
-                        this.cx.fillRect(x + 1, y + 1, 14, 14);
                         this.cx.fillStyle = '#044';
+                        this.cx.fillRect(x + 1, y + 1, 14, 14);
+                        this.cx.fillStyle = '#088';
                         this.cx.fillRect(x + 15, y, 1, 16);
                         this.cx.fillRect(x, y + 15, 16, 1);
                         this.cx.fillRect(x, y, 16, 1);
@@ -50,6 +50,10 @@ class CanvasDisplay {
             this.data.currentPlayer.possibleMoves.forEach(move => {
                 this.cx.fillStyle = '#00f8';
                 this.cx.fillRect(move.x * 16 + 1, move.y * 16 + 1, 14, 14);
+            });
+            this.data.currentPlayer.possibleAttacks.forEach(attack => {
+                this.cx.fillStyle = '#f008';
+                this.cx.fillRect(attack.x * 16 + 1, attack.y * 16 + 1, 14, 14);
             });
         }
 

@@ -3,13 +3,13 @@
 [![Build Status](https://travis-ci.com/samyvera/chess_game_b3.svg?token=KepWfxdRLautAeksBzaf&branch=master)](https://travis-ci.com/samyvera/chess_game_b3)
 [![Dependency Status](https://david-dm.org/samyvera/chess_game_b3.svg)](https://david-dm.org/samyvera/chess_game_b3)
 
-An online chess game built on NodeJs with Express and socket.io.  No unnecessary libraries.
+An online chess game built on NodeJs with [Express](https://expressjs.com/) and socket.io.  No unnecessary libraries.
 
 Live demo not available yet.
 
 ## Getting Started
 
-Install the latest [Node.js](http://nodejs.org) 11 Stable
+Install the latest [Node.js](http://nodejs.org)
 
 ```console
 git clone https://github.com/samyvera/chess_game_b3.git
@@ -31,5 +31,14 @@ Open your web browser to `localhost:3000`
 - ~~Rooms~~
 - Player settings
   - ~~Add name~~
-- ~~Local storage of name~~
 - ~~Sound effects~~
+
+## To do
+
+- Turns
+- Kick looser if someone is waiting to play
+- Pieces can't move through other pieces (exept knights)
+- Store dead pieces (to promote pawns)
+- "En passant"
+- "Castle"
+- "Checkmate"
