@@ -60,9 +60,10 @@ class CanvasDisplay {
         this.draw2DCursor = () => {
             var cursor = document.createElement("img");
             var pos = this.data.currentPlayer.pos;
+            var turn = (this.data.currentPlayer.role === "player1" && this.data.turn % 2 === 1) || (this.data.currentPlayer.role === "player2" && this.data.turn % 2 === 0);
             cursor.src = "../img/2DCursor.png";
             var spriteY = this.data.currentPlayer.action ? 16 : 0;
-            if (pos) this.cx.drawImage(cursor, Math.floor(this.animationTime * 3) % 2 * 16, spriteY, 16, 16, pos.x - 8, pos.y - 8, 16, 16);
+            if (pos && turn) this.cx.drawImage(cursor, Math.floor(this.animationTime * 3) % 2 * 16, spriteY, 16, 16, pos.x - 8, pos.y - 8, 16, 16);
         }
 
         this.draw2DPiece = () => {
@@ -124,6 +125,13 @@ class CanvasDisplay {
                     this.cx.drawImage(tilesSprites, 0, 0, 16, 16, posX, posY, 16, 16);
                 }
             }
+            this.cx.textAlign = "center";
+            this.cx.fillStyle = "#FFFFFF";
+            this.cx.font = "bold 12px sans-serif";
+            this.cx.fillText(
+                "WORK IN PROGRESS",
+                16*4.5,
+                -48);
         }
 
         this.drawHUD = () => {
@@ -148,7 +156,7 @@ class CanvasDisplay {
                         if (this.data.players.length > 1 && 
                             piece.pos.x === Math.trunc(this.data.currentPlayer.pos.x / 16) && piece.pos.y === Math.trunc(this.data.currentPlayer.pos.y / 16)) {
                             this.cx.textAlign = "right";
-                            var info = this.data.currentPlayer.selectedPiece ? ("[ " + this.data.currentPlayer.selectedPiece.color + " " + this.data.currentPlayer.selectedPiece.role + " ]") : piece.color + " " + piece.role;
+                            var info = piece.color + " " + piece.role;
                             this.cx.fillText(
                                 info,
                                 152,

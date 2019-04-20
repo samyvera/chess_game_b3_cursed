@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.com/samyvera/chess_game_b3.svg?token=KepWfxdRLautAeksBzaf&branch=master)](https://travis-ci.com/samyvera/chess_game_b3)
 [![Dependency Status](https://david-dm.org/samyvera/chess_game_b3.svg)](https://david-dm.org/samyvera/chess_game_b3)
 
-An online chess game built on NodeJs with [Express](https://expressjs.com/) and socket.io.  No unnecessary libraries.
+An online chess game built on NodeJs with [Express](https://expressjs.com/) and [socket.io](https://socket.io/).  No unnecessary libraries.
 
 Live demo not available yet.
 
@@ -35,7 +35,6 @@ Open your web browser to `localhost:3000`
 
 ## To do
 
-- Turns
 - Kick looser if someone is waiting to play
 - Pieces can't move through other pieces (exept knights)
 - Store dead pieces (to promote pawns)

@@ -118,6 +118,7 @@ class Player {
                     if (Math.trunc(this.pos.x / 16) === move.x && Math.trunc(this.pos.y / 16) === move.y) {
                         this.selectedPiece.pos = move;
                         this.cancel(game);
+                        game.turn++;
                     }
                 });
                 this.possibleAttacks.forEach(attack => {
@@ -129,6 +130,7 @@ class Player {
                         });
                         this.selectedPiece.pos = attack;
                         this.cancel(game);
+                        game.turn++;
                     }
                 });
             }
@@ -146,6 +148,18 @@ class Player {
         this.play = game => {
             this.action = this.input ? this.input : this.action;
             this.idlePos = new Vector2D(Math.trunc(this.pos.x / 16) * 16 + 8, Math.trunc(this.pos.y / 16) * 16 + 8);
+
+            if (game.turn % 2 === 0 && this.role === "player1" || game.turn % 2 === 1 && this.role === "player2") {
+                this.keys = {
+                    left: false,
+                    right: false,
+                    up: false,
+                    down: false,
+                    a: false,
+                    b: false
+                };
+            }
+
             if (!this.status) {
                 if (this.keys.up || this.keys.left || this.keys.down || this.keys.right) this.moveCursor(game);
                 else this.moveIdlePos(game);
