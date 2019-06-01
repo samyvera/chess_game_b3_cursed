@@ -1,62 +1,54 @@
 var socket = io();
 
 var setupSocket = socket => {
-    socket.on("welcome", () => {
-        socket.emit("gotit");
-        global.gameStart = true;
+    socket.on("welcome", (usersLength, rooms) => {
+        global.usersLength = usersLength;
+        global.rooms = rooms;
+        global.connected = true;
     });
 
-    socket.on("updateGame", newData => global.gameData = newData);
-
-    socket.on("RIP", () => {
-        global.gameStart = false;
-        global.died = true;
+    socket.on("updateOnline", (usersLength, rooms) => {
+        global.usersLength = usersLength;
+        global.rooms = rooms;
     });
 
     socket.on("connect_failed", () => {
         socket.close();
-        global.disconnected = true;
+        global.connected = false;
     });
 
     socket.on("disconnect", () => {
         socket.close();
-        global.disconnected = true;
+        global.connected = false;
     });
 }
 
-var trackKeys = (socket, codes) => {
+var trackKeys = codes => {
     var pressed = new Map();
     codes.forEach(code => pressed.set(code, false));
     var handler = event => {
         if (codes.get(event.keyCode) !== undefined) {
-            var down = event.type === "keydown";
-            pressed.set(codes.get(event.keyCode), down);
+            pressed.set(codes.get(event.keyCode), event.type === "keydown");
             event.preventDefault();
         }
-        var obj = {};
-        pressed.forEach ((v,k) => { obj[k] = v });
-        socket.emit('inputs', obj);
-    };
+    }
     addEventListener("keydown", handler);
     addEventListener("keyup", handler);
-};
+    return pressed;
+}
 
-trackKeys(socket, global.arrowCodes);
+var keys = trackKeys(global.arrowCodes);
 
-var runAnimation = display => {
-    var lastTime = null;
+window.onload = () => {
+    var display = new CanvasDisplay();
+    global.window = new TitleWindow('Chess Game B3', new Vector2D(64, 96), new Vector2D(128, 56), ['Play now !']);
+    global.startOnline = false;
+    socket.emit("join", global.name);
+    setupSocket(socket);
     var frame = time => {
-        if (lastTime !== null) display.drawFrame(global.gameData, Math.min(time - lastTime, 100) / 1000);
-        lastTime = time;
+        global.update(keys);
+        display.drawFrame();
         requestAnimationFrame(frame);
     };
     requestAnimationFrame(frame);
 };
-
-var startGame = () => {
-    runAnimation(new CanvasDisplay(document.body));
-    socket.emit("spawn", global.defaultPlayerName);
-    setupSocket(socket);
-}
-
-window.onload = () => startGame();

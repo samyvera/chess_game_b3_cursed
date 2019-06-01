@@ -1,4 +1,3 @@
-var debug = true;
 var flipHorizontally = (context, around) => {
     context.translate(around, 0);
     context.scale(-1, 1);
@@ -6,281 +5,142 @@ var flipHorizontally = (context, around) => {
 }
 
 class CanvasDisplay {
-    constructor(parent) {
+    constructor() {
         this.canvas = document.createElement('canvas');
         this.cx = this.canvas.getContext("2d", {
             alpha: false
         });
-        this.zoom = 3;
-        this.mode = "2d";
+        this.zoom = 2;
+        this.lastTime = null;
+        this.status = null;
         this.animationTime = 0;
-        this.canvas.width = 10 * global.scale * this.zoom;
-        this.canvas.height = 12 * global.scale * this.zoom;
-        parent.appendChild(this.canvas);
+        this.canvas.width = global.width * this.zoom;
+        this.canvas.height = global.height * this.zoom;
+        document.getElementById("container").appendChild(this.canvas);
         this.cx.scale(this.zoom, this.zoom);
         this.cx.imageSmoothingEnabled = false;
-        this.data = global.gameData;
 
-        this.draw2DBackground = () => {
-            for (let x = 0; x < 8 * 16; x += 16) {
-                for (let y = 0; y < 8 * 16; y += 16) {
-                    if (x / 16 % 2 === 0 && y / 16 % 2 === 0 || x / 16 % 2 !== 0 && y / 16 % 2 !== 0) {
-                        this.cx.fillStyle = '#088';
-                        this.cx.fillRect(x + 1, y + 1, 14, 14);
-                        this.cx.fillStyle = '#044';
-                        this.cx.fillRect(x + 15, y, 1, 16);
-                        this.cx.fillRect(x, y + 15, 16, 1);
-                        this.cx.fillRect(x, y, 16, 1);
-                        this.cx.fillRect(x, y, 1, 16);
-                    }
-                    else {
-                        this.cx.fillStyle = '#044';
-                        this.cx.fillRect(x + 1, y + 1, 14, 14);
-                        this.cx.fillStyle = '#088';
-                        this.cx.fillRect(x + 15, y, 1, 16);
-                        this.cx.fillRect(x, y + 15, 16, 1);
-                        this.cx.fillRect(x, y, 16, 1);
-                        this.cx.fillRect(x, y, 1, 16);
-                    }
-                }
-            }
-        }
+        this.drawWindows = () => {
+            var drawWindow = window => {
+                this.cx.fillStyle = "#000";
+                this.cx.fillRect(window.pos.x, window.pos.y, window.size.x, window.size.y);
+                this.cx.fillStyle = "#fff";
+                this.cx.fillRect(window.pos.x + 3, window.pos.y + 3, window.size.x - 6, 2);
+                this.cx.fillRect(window.pos.x + 3, window.pos.y + window.size.y - 5, window.size.x - 6, 2);
+                this.cx.fillRect(window.pos.x + 3, window.pos.y + 3, 2, window.size.y - 6);
+                this.cx.fillRect(window.pos.x + window.size.x - 5, window.pos.y + 3, 2, window.size.y - 6);
+                this.cx.font = "16px rcr";
+                this.cx.textAlign = "left";
+                this.cx.fillText(window.name, window.pos.x + 12, window.pos.y + 20);
+                this.cx.fillRect(window.pos.x + 3, window.pos.y + 24 + 3, window.size.x - 6, 2);
 
-        this.draw2DMoves = () => {
-            this.data.currentPlayer.possibleMoves.forEach(move => {
-                this.cx.fillStyle = '#00f8';
-                this.cx.fillRect(move.x * 16 + 1, move.y * 16 + 1, 14, 14);
-            });
-            this.data.currentPlayer.possibleAttacks.forEach(attack => {
-                this.cx.fillStyle = '#f008';
-                this.cx.fillRect(attack.x * 16 + 1, attack.y * 16 + 1, 14, 14);
-            });
-        }
-
-        this.draw2DCursor = () => {
-            var cursor = document.createElement("img");
-            var pos = this.data.currentPlayer.pos;
-            var turn = (this.data.currentPlayer.role === "player1" && this.data.turn % 2 === 1) || (this.data.currentPlayer.role === "player2" && this.data.turn % 2 === 0);
-            cursor.src = "../img/2DCursor.png";
-            var spriteY = this.data.currentPlayer.action ? 16 : 0;
-            if (pos && turn) this.cx.drawImage(cursor, Math.floor(this.animationTime * 3) % 2 * 16, spriteY, 16, 16, pos.x - 8, pos.y - 8, 16, 16);
-        }
-
-        this.draw2DPiece = () => {
-            this.data.players.forEach(player => {
-                player.army.forEach(piece => {
-                    var spritePos = null;
-                    if (piece.role === "pawn") spritePos = 0;
-                    else if (piece.role === "king") spritePos = 1;
-                    else if (piece.role === "queen") spritePos = 2;
-                    else if (piece.role === "rook") spritePos = 3;
-                    else if (piece.role === "knight") spritePos = 4;
-                    else if (piece.role === "bishop") spritePos = 5;
-                    var spriteX = spritePos * 16;
-                    var spriteY = 0;
-                    var width = 16;
-                    var height = 16;
-                    var posX = piece.pos.x * 16;
-                    var posY = piece.pos.y * 16;
-                    var sprite = document.createElement("img");
-                    if (player.role === "player1") {
-                        sprite.src = "../img/white";
-                        if (this.data.currentPlayer.role === "spectator") sprite.src = "../img/white-demi"
-                        else if (global.reverse) sprite.src = "../img/white-reverse";
-                    }
-                    else if (player.role === "player2") {
-                        sprite.src = "../img/black";
-                        if (this.data.currentPlayer.role === "spectator") sprite.src = "../img/black-demi"
-                        else if (global.reverse) sprite.src = "../img/black-reverse";
-                    }
-                    if (piece.status === "selected") {
-                        height = 32;
-                        if (this.data.currentPlayer.role === "player1") {
-                            posY += Math.floor(this.animationTime * 3) % 2;
+                if (window instanceof KeyboardWindow) {
+                    window.options.forEach((option, index) => {
+                        if (window.index === index) {
+                            this.cx.fillRect(window.pos.x + 24 + 16 *(index % 13), window.pos.y + 48 + 16 * Math.floor(index / 13), 16, 16);
+                            this.cx.fillStyle = '#000';
                         }
-                        else if (this.data.currentPlayer.role === "player2") {
-                            posY -= Math.floor(this.animationTime * 3) % 2;
-                        }
-                        else if (this.data.currentPlayer.role === "spectator") {
-                            posX += Math.floor(this.animationTime * 3) % 2;
-                        }
-                    }
-                    sprite.src += ".png";
-                    this.cx.drawImage(sprite, spriteX, spriteY, width, height, posX, posY, width, height);
-                });
-            });
-        }
-
-        this.calculPos = pos => {
-            return { x:pos.x * 8 + pos.z * 8, y:pos.z * 4 - pos.x * 4 - pos.y * 8 };
-        }
-
-        this.drawIsoBackground = () => {
-            for (let z = 0; z < 8; z++) {
-                for (let x = 8; x > 0; x--) {
-                    var tilesSprites = document.createElement("img");
-                    tilesSprites.src = "../img/grass.png";
-                    var posX = this.calculPos({x:x, y:0, z:z}).x;
-                    var posY = this.calculPos({x:x, y:0, z:z}).y;
-                    this.cx.drawImage(tilesSprites, 0, 0, 16, 16, posX, posY, 16, 16);
-                }
-            }
-            this.cx.textAlign = "center";
-            this.cx.fillStyle = "#FFFFFF";
-            this.cx.font = "bold 12px sans-serif";
-            this.cx.fillText(
-                "WORK IN PROGRESS",
-                16*4.5,
-                -48);
-        }
-
-        this.drawHUD = () => {
-            this.cx.fillStyle = '#000';
-            this.cx.fillRect(0, 0, 10 * 16, 16);
-            this.cx.fillRect(0, 0, 8, 10 * 16);
-            this.cx.fillRect(9.5 * 16, 0, 8, 10 * 16);
-            this.cx.fillRect(0, 16 * 10, 10 * 16, 32);
-
-            this.cx.textAlign = "left";
-            this.cx.fillStyle = "#FFFFFF";
-            this.cx.font = "bold 8px sans-serif";
-            if (this.data.currentPlayer && this.data.currentPlayer.role !== "spectator") {
-                var info = "You are a " + this.data.currentPlayer.role;
-                if (this.data.players.length === 1) {
-                    info += ". Please wait";
-                    for (let i = 0; i < Math.floor(this.animationTime) % 4; i++) info += ".";
-                }
-                this.cx.fillText(info, 8, 12);
-                this.data.players.forEach(player => {
-                    player.army.forEach(piece => {
-                        if (this.data.players.length > 1 && 
-                            piece.pos.x === Math.trunc(this.data.currentPlayer.pos.x / 16) && piece.pos.y === Math.trunc(this.data.currentPlayer.pos.y / 16)) {
-                            this.cx.textAlign = "right";
-                            var info = piece.color + " " + piece.role;
-                            this.cx.fillText(
-                                info,
-                                152,
-                                12
-                            );
-                        }
+                        else this.cx.fillStyle = "#fff";
+                        this.cx.fillText(
+                            option,
+                            window.pos.x + 28 + 16 * (index % 13),
+                            window.pos.y + 60 + 16 * Math.floor(index / 13)
+                        );
                     });
-                });
-            }
-            else if (this.data.currentPlayer) {
-                var info = "You are a " + this.data.currentPlayer.role + ". Please wait";
-                for (let i = 0; i < Math.floor(this.animationTime) % 4; i++) info += ".";
-                this.cx.fillText(info, 8, 12);
-            }
-        }
-
-        this.clearDisplay = () => {
-            var gradient = this.cx.createLinearGradient(0, 0, 0, 16 * 10);
-            gradient.addColorStop(0, "rgba(128, 128, 160, 1)");
-            gradient.addColorStop(1, "rgba(32, 32, 64, 1)");
-            this.cx.fillStyle = gradient;
-            this.cx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        }
-
-        this.drawGameStatus = () => {
-            if (global.died) {
-                this.cx.fillStyle = "#333333";
-                this.cx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-                this.cx.textAlign = "center";
-                this.cx.fillStyle = "#FFFFFF";
-                this.cx.font = "bold 30px sans-serif";
-                this.cx.fillText(
-                    "You died!",
-                    this.canvas.width / 2,
-                    this.canvas.height / 2
-                );
-            } else if (!global.disconnected) {
-                if (!global.gameStart) {
-                    this.cx.fillStyle = "#333333";
-                    this.cx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-                    this.cx.textAlign = "center";
-                    this.cx.fillStyle = "#FFFFFF";
-                    this.cx.font = "bold 30px sans-serif";
+                    this.cx.fillStyle = "#fff";
+                    var slash = this.animationTime % 32 < 16 ? "|" : "";
                     this.cx.fillText(
-                        "Game Over!",
-                        this.canvas.width / 2,
-                        this.canvas.height / 2
+                        window.string + slash,
+                        window.pos.x + 128,
+                        window.pos.y + 13 * 16
                     );
                 }
-            } else {
-                this.cx.fillStyle = "#333333";
-                this.cx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-                this.cx.textAlign = "center";
-                this.cx.fillStyle = "#FFFFFF";
-                this.cx.font = "bold 30px sans-serif";
-                if (global.kicked) {
+                else if (window instanceof OnlineWindow) {
+                    this.cx.textAlign = "right";
                     this.cx.fillText(
-                        "You were kicked!",
-                        this.canvas.width / 2,
-                        this.canvas.height / 2
+                        window.usersLength + ' players in ' + window.rooms.length + ' rooms',
+                        window.pos.x + window.size.x - 12,
+                        window.pos.y + 20
                     );
-                } else {
-                    this.cx.fillText(
-                        "Disconnected!",
-                        this.canvas.width / 2,
-                        this.canvas.height / 2
-                    );
+                    drawWindow(window.menu);
+                    drawWindow(window.roomList);
+                }
+                else if (window instanceof OptionWindow) {
+                    window.options.forEach((option, index) => {
+                        if (window.index === index) {
+                            this.cx.fillRect(window.pos.x + 8, window.pos.y + 32 + 16 * index, window.size.x - 16, 16);
+                            this.cx.fillStyle = '#000';
+                        }
+                        else this.cx.fillStyle = "#fff";
+                        this.cx.fillText(
+                            option,
+                            window.pos.x + 12,
+                            window.pos.y + 44 + 16 * index
+                        );
+                    });
+                }
+                else if (window instanceof RoomWindow) {
+                    window.menu.options.forEach((option, index) => {
+                        if (window.menu.index === index) {
+                            this.cx.fillRect(window.menu.pos.x + 8, window.menu.pos.y + 32 + 16 * index, window.menu.size.x - 16, 16);
+                            this.cx.fillStyle = '#000';
+                        }
+                        else this.cx.fillStyle = "#fff";
+                        this.cx.fillText(
+                            option,
+                            window.menu.pos.x + 12,
+                            window.menu.pos.y + 44 + 16 * index
+                        );
+                    });
                 }
             }
+            var rootWindow = global.window;
+            drawWindow(rootWindow);
         }
 
-        this.drawFrame = (newData, step) => {
-            this.data = newData;
-            this.mode = document.getElementById("mode").checked ? "iso" : "2d";
-            this.animationTime += step;
-            this.clearDisplay();
+        // this.drawGrid = () => {
+        //     for (let x = 0; x < 8 * 16; x += 16) {
+        //         for (let y = 0; y < 8 * 16; y += 16) {
+        //             if (x / 16 % 2 === 0 && y / 16 % 2 === 0 || x / 16 % 2 !== 0 && y / 16 % 2 !== 0) {
+        //                 this.cx.fillStyle = '#088';
+        //                 this.cx.fillRect(x + 1, y + 1, 14, 14);
+        //                 this.cx.fillStyle = '#044';
+        //                 this.cx.fillRect(x + 15, y, 1, 16);
+        //                 this.cx.fillRect(x, y + 15, 16, 1);
+        //                 this.cx.fillRect(x, y, 16, 1);
+        //                 this.cx.fillRect(x, y, 1, 16);
+        //             } else {
+        //                 this.cx.fillStyle = '#044';
+        //                 this.cx.fillRect(x + 1, y + 1, 14, 14);
+        //                 this.cx.fillStyle = '#088';
+        //                 this.cx.fillRect(x + 15, y, 1, 16);
+        //                 this.cx.fillRect(x, y + 15, 16, 1);
+        //                 this.cx.fillRect(x, y, 16, 1);
+        //                 this.cx.fillRect(x, y, 1, 16);
+        //             }
+        //         }
+        //     }
+        // }
 
-            if (this.data.currentPlayer) {
-                if (this.mode === "2d") {
-                    this.cx.translate(16, 24);
-                    if (this.data.currentPlayer.role === "player1") {
-                        this.cx.translate(16*4, 16*4);
-                        this.cx.rotate(Math.PI);
-                        this.cx.translate(-(16*4), -(16*4));
-                        global.reverse = true;
-                        global.arrowCodes.set(37, "right");
-                        global.arrowCodes.set(38, "down");
-                        global.arrowCodes.set(39, "left");
-                        global.arrowCodes.set(40, "up");
-                    }
-                    else if (this.data.currentPlayer.role === "spectator") {
-                        this.cx.translate(16*4, 16*4);
-                        this.cx.rotate(-Math.PI/2);
-                        this.cx.translate(-(16*4), -(16*4));
-                    }
-                    else {
-                        global.reverse = false;
-                        global.arrowCodes.set(37, "left");
-                        global.arrowCodes.set(38, "up");
-                        global.arrowCodes.set(39, "right");
-                        global.arrowCodes.set(40, "down");
-                    }
-                    this.draw2DBackground();
-                    if (this.data.currentPlayer.possibleMoves) this.draw2DMoves();
-                    if (this.data.players.length > 1) this.draw2DCursor();
-                    this.draw2DPiece();
-                    if (this.data.currentPlayer.role === "player1") {
-                        this.cx.setTransform(this.zoom, 0, 0, this.zoom, 16 * 3, 16 * 4.5);
-                    }
-                    else if (this.data.currentPlayer.role === "spectator") {
-                        this.cx.setTransform(this.zoom, 0, 0, this.zoom, 16 * 3, 16 * 4.5);
-                    }
-                    this.cx.translate(-16, -24);
-                } else {
-                    this.cx.translate(8, 16*6);
-                    this.drawIsoBackground();
-                    this.cx.translate(-8, -16*6);
-                }
-            }
-            this.drawHUD();
-            this.drawGameStatus();
+        // this.drawCursor = () => {
+        //     var cursor = document.createElement("img");
+        //     var pos = this.data.currentPlayer.pos;
+        //     var turn = (this.data.currentPlayer.role === "player1" && this.data.turn % 2 === 1) || (this.data.currentPlayer.role === "player2" && this.data.turn % 2 === 0);
+        //     cursor.src = "../img/2DCursor.png";
+        //     var spriteY = this.data.currentPlayer.action ? 16 : 0;
+        //     if (pos && turn) this.cx.drawImage(cursor, Math.floor(this.animationTime * 3) % 2 * 16, spriteY, 16, 16, pos.x - 8, pos.y - 8, 16, 16);
+        // }
+
+        // this.calculPos = pos => {
+        //     return {
+        //         x: pos.x * 8 + pos.z * 8,
+        //         y: pos.z * 4 - pos.x * 4 - pos.y * 8
+        //     };
+        // }
+
+        this.drawFrame = () => {
+            this.animationTime++;
+            if (global.window) this.drawWindows();
         };
     }
 }

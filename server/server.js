@@ -5,46 +5,52 @@ var io = require('socket.io')(http);
 
 var config = require('../config');
 var util = require('./lib/util');
-var Game = require('./lib/game');
-
-var sockets = {};
+var User = require('./lib/user');
+var Room = require('./lib/room');
 
 app.use(express.static(__dirname + '/../client'));
 
+var sockets = new Map();
+var users = new Map();
+
 io.on('connection', socket => {
-    var currentPlayer = game.createNewPlayer(socket);
+    var user = new User(socket.id);
 
-    socket.on('spawn', playerName => {
-        if (util.findIndex(game.players, currentPlayer.id) > -1) game.players.splice(util.findIndex(game.players, currentPlayer.id), 1);
-        currentPlayer.name = playerName;
-        socket.emit('welcome');
-    });
-
-    socket.on('gotit', () => {
-        if (util.findIndex(game.players, currentPlayer.id) > -1 || !util.validNick(currentPlayer.name)) socket.disconnect();
+    socket.on('join', name => {
+        if (users.has(user.id) || !util.validName(name)) socket.disconnect();
         else {
-            sockets[currentPlayer.id] = socket;
-            game.players.push(currentPlayer);
-            game.updatePlayers(currentPlayer.role);
+            sockets.set(user.id, socket);
+            users.set(user.id, user);
+            user.name = name;
+            
+            var rooms = [];
+            users.forEach(user => {
+                if (user.room && user.isHost) rooms.push(user.room);
+            })
+            socket.emit('welcome', users.size, rooms);
         }
     });
 
-    socket.on('inputs', keys => currentPlayer.keys = util.validKeys(keys));
+    socket.on('requestRoomHosting', name => {
+        if (!user.isHost) {
+            user.isHost = true;
+            user.room = new Room(user, name);
+        }
+    });
 
     socket.on('disconnect', () => {
-        if (util.findIndex(game.players, currentPlayer.id) > -1) game.players.splice(util.findIndex(game.players, currentPlayer.id), 1);
-        game.updatePlayers(currentPlayer.role);
+        if (users.has(user.id)) users.delete(user.id);
     });
 });
 
-var game = new Game();
-var sendUpdates = () => game.players.forEach(player => {
-    game.currentPlayer = player;
-    sockets[player.id].emit('updateGame', game);
+var updateOnline = () => users.forEach(user => {
+    var rooms = [];
+    users.forEach(user => {
+        if (user.room && user.isHost) rooms.push(user.room);
+    });
+    sockets.get(user.id).emit('updateOnline', users.size, rooms);
 });
 
-setInterval(game.act, 1000 / config.networkUpdateFactor);
-setInterval(sendUpdates, 1000 / config.networkUpdateFactor);
+setInterval(updateOnline, 1000);
 
-var serverPort = process.env.PORT || config.port;
-http.listen(serverPort, () => console.log("Server is listening on port " + serverPort));
+http.listen(process.env.PORT || config.port);

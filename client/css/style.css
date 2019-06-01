@@ -1,114 +1,97 @@
-html, body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    display: flex;
-    background-image: url('../img/back.png');
+@font-face {
+  font-family : "rcr";
+  src         : url("../font/RCR.ttf");
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  display: flex;
+  background-image: url('../img/back.png');
+}
+
+#container {
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 canvas {
-    margin: auto;
-    padding: 64px 0;
-    z-index: 1;
+  margin: auto;
+  margin-top: 0;
+  z-index: 2;
 }
 
-/* The switch - the box around the slider */
-.switch {
-    position: absolute;
-    z-index: 2;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
-    margin: 16px;
-  }
-  
-  /* Hide default HTML checkbox */
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  
-  /* The slider */
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border: none;
-    border: 1px solid #fff;
-    background-color: #000;
-    -webkit-transition: .4s;
-    transition: .4s;
-  }
-  
-  .slider:before {
-    position: absolute;
-    content: "";
-    height: 24px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: #fff;
-    -webkit-transition: .4s;
-    transition: .4s;
-  }
-  
-  input:checked + .slider {
-    border: none;
-    border: 1px solid #000;
-    background-color: #fff;
-  }
-  
-  input:checked + .slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
-    background-color: #000;
-  }
+#infos {
+  height: 33px;
+  width: 100%;
+  margin: 0 0 32px 0;
+  padding: 8px 16px;
+  border: none;
+  border: 1px solid #fff;
+  background-color: #000;
+  color: #fff;
+  font-family: monospace;
+  transition: 0.3s;
+  z-index: 2;
+}
+#infos:hover {
+  background-color: #fff;
+  color: #000;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#infos:focus {
+  outline: none;
+}
 
-  #infos {
-    position: absolute;
-    top: 16px;
-    left: 96px;
-    height: 33px;
-    width: auto;
-    margin: 0;
-    margin-right: 16px;
-    padding: 8px 16px;
-    border: none;
-    border: 1px solid #fff;
-    background-color: #000;
-    color: #fff;
-    font-family: monospace;
-    transition: 0.3s;
-    z-index: 2;
-  }
-  #infos:hover {
-    background-color: #fff;
-    color: #000;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  #infos:focus {
-    outline: none;
-  }
+#informations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: #000d;
+  text-align: center;
+  cursor: pointer;
+  z-index: 2;
+}
 
-  #informations {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    background: #000d;
-    text-align: center;
-    cursor: pointer;
-    z-index: 2;
-  }
+#title {
+  width: 100%;
+  height: 64px;
+  padding-top: 32px;
+	text-align:center;
+	font-size:73px;
+	font-weight:bold;
+	font-family:"Comic Sans MS", cursive;
+	color:#F33;
+}
+
+nav {
+  width: 256px;
+	text-align:center;
+	background-image:url('../img/dark-magician-girl.png');
+	background-position:center;
+	background-repeat:repeat;
+	border-right:3px #FF3399 solid;
+	border-bottom:3px #FF3399 solid;
+}
+
+nav table {
+  width: 100%;
+  margin: 32px 0;
+  background-color: #fcf;
+  border: 1px solid #000;
+}
+
+nav td {
+  border: 1px solid #000;
+}
