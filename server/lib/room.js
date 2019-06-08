@@ -1,6 +1,5 @@
 class Room {
-    constructor(host, name) {
-        this.host = host;
+    constructor(name) {
         this.name = name;
     }
 }

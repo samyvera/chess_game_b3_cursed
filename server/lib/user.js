@@ -1,7 +1,7 @@
 class User {
     constructor(id) {
         this.id = id;
-        this.isHost = false;
+        this.name = null;
         this.room = null;
     }
 }

@@ -20,54 +20,43 @@ class CanvasDisplay {
         this.cx.scale(this.zoom, this.zoom);
         this.cx.imageSmoothingEnabled = false;
 
-        this.drawWindows = () => {
-            var drawWindow = window => {
-                this.cx.fillStyle = "#000";
-                this.cx.fillRect(window.pos.x, window.pos.y, window.size.x, window.size.y);
-                this.cx.fillStyle = "#fff";
-                this.cx.fillRect(window.pos.x + 3, window.pos.y + 3, window.size.x - 6, 2);
-                this.cx.fillRect(window.pos.x + 3, window.pos.y + window.size.y - 5, window.size.x - 6, 2);
-                this.cx.fillRect(window.pos.x + 3, window.pos.y + 3, 2, window.size.y - 6);
-                this.cx.fillRect(window.pos.x + window.size.x - 5, window.pos.y + 3, 2, window.size.y - 6);
-                this.cx.font = "16px rcr";
-                this.cx.textAlign = "left";
-                this.cx.fillText(window.name, window.pos.x + 12, window.pos.y + 20);
-                this.cx.fillRect(window.pos.x + 3, window.pos.y + 24 + 3, window.size.x - 6, 2);
+        this.drawWindow = (window, active) => {
+            this.cx.fillStyle = "#000";
+            this.cx.fillRect(window.pos.x, window.pos.y, window.size.x, window.size.y);
+            this.cx.fillStyle = "#fff";
+            this.cx.fillRect(window.pos.x + 3, window.pos.y + 3, window.size.x - 6, 2);
+            this.cx.fillRect(window.pos.x + 3, window.pos.y + window.size.y - 5, window.size.x - 6, 2);
+            this.cx.fillRect(window.pos.x + 3, window.pos.y + 3, 2, window.size.y - 6);
+            this.cx.fillRect(window.pos.x + window.size.x - 5, window.pos.y + 3, 2, window.size.y - 6);
+            this.cx.font = "16px rcr";
+            this.cx.textAlign = "left";
+            if (window.name === global.name) this.cx.fillText(window.name + ' | ' + global.users.length + ' users in ' + global.getRoomList().length + ' rooms', window.pos.x + 12, window.pos.y + 20);
+            else this.cx.fillText(window.name, window.pos.x + 12, window.pos.y + 20);
+            this.cx.fillRect(window.pos.x + 3, window.pos.y + 24 + 3, window.size.x - 6, 2);
 
-                if (window instanceof KeyboardWindow) {
-                    window.options.forEach((option, index) => {
-                        if (window.index === index) {
-                            this.cx.fillRect(window.pos.x + 24 + 16 *(index % 13), window.pos.y + 48 + 16 * Math.floor(index / 13), 16, 16);
-                            this.cx.fillStyle = '#000';
-                        }
-                        else this.cx.fillStyle = "#fff";
-                        this.cx.fillText(
-                            option,
-                            window.pos.x + 28 + 16 * (index % 13),
-                            window.pos.y + 60 + 16 * Math.floor(index / 13)
-                        );
-                    });
-                    this.cx.fillStyle = "#fff";
-                    var slash = this.animationTime % 32 < 16 ? "|" : "";
+            if (window instanceof KeyboardWindow) {
+                window.options.forEach((option, index) => {
+                    if (active && window.index === index) {
+                        this.cx.fillRect(window.pos.x + 24 + 16 * (index % 13), window.pos.y + 48 + 16 * Math.floor(index / 13), 16, 16);
+                        this.cx.fillStyle = '#000';
+                    } else this.cx.fillStyle = "#fff";
                     this.cx.fillText(
-                        window.string + slash,
-                        window.pos.x + 128,
-                        window.pos.y + 13 * 16
+                        option,
+                        window.pos.x + 28 + 16 * (index % 13),
+                        window.pos.y + 60 + 16 * Math.floor(index / 13)
                     );
-                }
-                else if (window instanceof OnlineWindow) {
-                    this.cx.textAlign = "right";
-                    this.cx.fillText(
-                        window.usersLength + ' players in ' + window.rooms.length + ' rooms',
-                        window.pos.x + window.size.x - 12,
-                        window.pos.y + 20
-                    );
-                    drawWindow(window.menu);
-                    drawWindow(window.roomList);
-                }
-                else if (window instanceof OptionWindow) {
+                });
+                this.cx.fillStyle = "#fff";
+                var slash = this.animationTime % 32 < 16 && active ? "|" : "";
+                this.cx.fillText(
+                    window.string + slash,
+                    window.pos.x + 128,
+                    window.pos.y + 13 * 16
+                );
+            } else if (window instanceof OptionWindow) {
+                if (window.options) {
                     window.options.forEach((option, index) => {
-                        if (window.index === index) {
+                        if (window.index === index && active) {
                             this.cx.fillRect(window.pos.x + 8, window.pos.y + 32 + 16 * index, window.size.x - 16, 16);
                             this.cx.fillStyle = '#000';
                         }
@@ -79,23 +68,7 @@ class CanvasDisplay {
                         );
                     });
                 }
-                else if (window instanceof RoomWindow) {
-                    window.menu.options.forEach((option, index) => {
-                        if (window.menu.index === index) {
-                            this.cx.fillRect(window.menu.pos.x + 8, window.menu.pos.y + 32 + 16 * index, window.menu.size.x - 16, 16);
-                            this.cx.fillStyle = '#000';
-                        }
-                        else this.cx.fillStyle = "#fff";
-                        this.cx.fillText(
-                            option,
-                            window.menu.pos.x + 12,
-                            window.menu.pos.y + 44 + 16 * index
-                        );
-                    });
-                }
             }
-            var rootWindow = global.window;
-            drawWindow(rootWindow);
         }
 
         // this.drawGrid = () => {
@@ -131,16 +104,10 @@ class CanvasDisplay {
         //     if (pos && turn) this.cx.drawImage(cursor, Math.floor(this.animationTime * 3) % 2 * 16, spriteY, 16, 16, pos.x - 8, pos.y - 8, 16, 16);
         // }
 
-        // this.calculPos = pos => {
-        //     return {
-        //         x: pos.x * 8 + pos.z * 8,
-        //         y: pos.z * 4 - pos.x * 4 - pos.y * 8
-        //     };
-        // }
-
         this.drawFrame = () => {
             this.animationTime++;
-            if (global.window) this.drawWindows();
+            this.cx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            if (global.document.length > 0) global.document.forEach((window, index) => this.drawWindow(window, index === global.document.length - 1));
         };
     }
 }
